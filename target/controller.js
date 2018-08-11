@@ -35,13 +35,14 @@ let MainController = class MainController {
             throw new routing_controllers_1.NotFoundError('Cannot find game');
         if (update.color) {
             if (game.checkColor(colors, [update.color]) === true)
-                return 'pick a right color';
+                return 'Pick a right color';
         }
         if (update.id)
             return 'You cant change the ID';
         if (update.board) {
-            if (moves(game.board, update.board) > 1)
-                return 'One move per game, you cheater!';
+            if (moves(game.board, update.board) > 1) {
+                throw new routing_controllers_1.BadRequestError('One move per game, you cheater!');
+            }
         }
         return entity_1.default.merge(game, update).save();
     }

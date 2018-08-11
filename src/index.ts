@@ -3,12 +3,9 @@ import setupDb from './db'
 import {createKoaServer} from "routing-controllers"
 import Controller from "./controller"
 
-
 const app = createKoaServer({
    controllers: [Controller]
 })
-
-
 
 setupDb()
   .then(_ =>

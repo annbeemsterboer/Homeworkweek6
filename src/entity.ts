@@ -37,7 +37,4 @@ export default class Game extends BaseEntity {
         ]
         return defaultBoard
     }
-
-
-    
 }
