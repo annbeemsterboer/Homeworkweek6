@@ -15,11 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
 const entity_1 = require("./entity");
 const colors = ['red', 'blue', 'green', 'yellow', 'magenta'];
-const defaultBoard = [
-    ['o', 'o', 'o'],
-    ['o', 'o', 'o'],
-    ['o', 'o', 'o']
-];
+const moves = (board1, board2) => board1
+    .map((row, y) => row.filter((cell, x) => board2[y][x] !== cell))
+    .reduce((a, b) => a.concat(b))
+    .length;
 let MainController = class MainController {
     async allGames() {
         const games = await entity_1.default.find();
@@ -27,8 +26,7 @@ let MainController = class MainController {
     }
     async createGame(game) {
         game.color = await game.setColor();
-        const newBoard = await game.setBoard();
-        game.board = JSON.parse(newBoard);
+        game.board = await game.setBoard();
         return game.save();
     }
     async updateGame(id, update) {
@@ -42,11 +40,8 @@ let MainController = class MainController {
         if (update.id)
             return 'You cant change the ID';
         if (update.board) {
-            const moves = (board1, board2) => board1
-                .map((row, y) => row.filter((cell, x) => board2[y][x] !== cell))
-                .reduce((a, b) => a.concat(b))
-                .length;
-            console.log(moves.length);
+            if (moves(game.board, update.board) > 1)
+                return 'One move per game, you cheater!';
         }
         return entity_1.default.merge(game, update).save();
     }

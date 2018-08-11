@@ -22,11 +22,11 @@ let Game = class Game extends BaseEntity_1.BaseEntity {
         return validator.arrayNotContains(array, values);
     }
     setBoard() {
-        const defaultBoard = JSON.stringify([
+        const defaultBoard = [
             ['o', 'o', 'o'],
             ['o', 'o', 'o'],
             ['o', 'o', 'o']
-        ]);
+        ];
         return defaultBoard;
     }
 };

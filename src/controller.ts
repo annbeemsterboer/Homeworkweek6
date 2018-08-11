@@ -2,12 +2,15 @@ import {JsonController, Get, Post, Body, HttpCode, Put, Param, NotFoundError} fr
 import Game from './entity'
 
 const colors = ['red', 'blue', 'green', 'yellow', 'magenta']
-const defaultBoard = [
-	['o', 'o', 'o'],
-	['o', 'o', 'o'],
-	['o', 'o', 'o']
-]
 
+const moves = (board1, board2) => 
+board1
+  .map((row, y) => row.filter((cell, x) => board2[y][x] !== cell))
+  .reduce((a, b) => a.concat(b))
+  .length
+
+
+  
 @JsonController()
 export default class MainController {
 
@@ -23,8 +26,7 @@ export default class MainController {
     @Body() game: Game
     ) {
     game.color = await game.setColor()
-    const newBoard = await game.setBoard()
-    game.board = JSON.parse(newBoard)
+    game.board = await game.setBoard()
     return game.save()
   }
 
@@ -42,12 +44,7 @@ export default class MainController {
           if (update.id) return 'You cant change the ID'
 
           if (update.board) {
-            const moves = (board1, board2) => board1
-            .map((row, y) => row.filter((cell, x) => board2[y][x] !== cell))
-            .reduce((a, b) => a.concat(b))
-            .length
-            // if (moves.length > 2) return 'One move per game, you cheater!'
-            console.log(moves.length)
+            if (moves(game.board, update.board) > 1) return 'One move per game, you cheater!'
           } 
 
           return Game.merge(game, update).save()
